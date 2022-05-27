@@ -1,5 +1,18 @@
-module.exports = (req, res, next) => {
-  next();
+const jwt = require('jsonwebtoken')
+const {JWT_SECRET} = require('../secrets/index')
+
+module.exports = async (req, res, next) => {
+  const token = req.headers.authorization
+  if(!token){
+    res.status(401).json({message:'token required'})
+    return
+  }
+  try{
+    req.decodedJWT = await jwt.verify(token,JWT_SECRET)
+    next()
+    return
+  }catch(err){res.status(401).json({message:'token invalid'})}
+
   /*
     IMPLEMENT
 
