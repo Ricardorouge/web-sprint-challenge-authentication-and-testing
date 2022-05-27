@@ -18,9 +18,22 @@ const validateBody = (req,res,next)=>{
         return
     } else{ next()}
 }
+const checkUserExists = async(req,res,next)=>{
+    try{
+        const [user] = await Users.getBy({username:req.body.username})
+        if(!user){
+            res.status(401).json({message:'Invalid credentials'})
+            return
+        } else{
+            req.user = user
+            next()
+        }
+    }catch(err){next(err)}
+}
 
 
 module.exports = {
     checkUserUnique,
-    validateBody
+    validateBody,
+    checkUserExists
 }
